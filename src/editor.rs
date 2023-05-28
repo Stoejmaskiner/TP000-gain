@@ -1,3 +1,4 @@
+use crate::assets;
 use atomic_float::AtomicF32;
 use nih_plug::prelude::{util, Editor};
 use nih_plug_vizia::vizia::prelude::*;
@@ -6,7 +7,6 @@ use nih_plug_vizia::{create_vizia_editor, ViziaState, ViziaTheming};
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::time::Duration;
-use crate::assets;
 
 use crate::GainParams;
 
@@ -20,7 +20,7 @@ impl Model for Data {}
 
 // Makes sense to also define this here, makes it a bit easier to keep track of
 pub(crate) fn default_state() -> Arc<ViziaState> {
-    ViziaState::from_size(200, 150)
+    ViziaState::new_with_default_scale_factor(|| (200, 150), 1.0)
 }
 
 pub(crate) fn create(
@@ -48,7 +48,7 @@ pub(crate) fn create(
 
         VStack::new(cx, |cx| {
             Label::new(cx, "GAIN")
-                .font(assets::ARCHIVO_BLACK)
+                .font_family(vec![FamilyOwned::Name(String::from(assets::ARCHIVO_BLACK))])
                 .font_size(30.0)
                 .height(Pixels(50.0))
                 .child_top(Stretch(1.0))
@@ -56,10 +56,13 @@ pub(crate) fn create(
 
             // NOTE: VIZIA adds 1 pixel of additional height to these labels, so we'll need to
             //       compensate for that
-            Label::new(cx, "Gain").bottom(Pixels(-1.0))
-                .font(assets::ARCHIVO_NARROW);
+            Label::new(cx, "Gain")
+                .bottom(Pixels(-1.0))
+                .font_family(vec![FamilyOwned::Name(String::from(
+                    assets::ARCHIVO_NARROW,
+                ))]);
             ParamSlider::new(cx, Data::params, |params| &params.gain)
-                .font(assets::IBM_PLEX_MONO);
+                .font_family(vec![FamilyOwned::Name(String::from(assets::IBM_PLEX_MONO))]);
 
             PeakMeter::new(
                 cx,

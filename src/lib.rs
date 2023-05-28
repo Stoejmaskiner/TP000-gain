@@ -84,16 +84,27 @@ impl Plugin for Gain {
 
     const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
-    const DEFAULT_INPUT_CHANNELS: u32 = 2;
-    const DEFAULT_OUTPUT_CHANNELS: u32 = 2;
+    // const DEFAULT_INPUT_CHANNELS: u32 = 2;
+    // const DEFAULT_OUTPUT_CHANNELS: u32 = 2;
 
-    const DEFAULT_AUX_INPUTS: Option<AuxiliaryIOConfig> = None;
-    const DEFAULT_AUX_OUTPUTS: Option<AuxiliaryIOConfig> = None;
+    // const DEFAULT_AUX_INPUTS: Option<AuxiliaryIOConfig> = None;
+    // const DEFAULT_AUX_OUTPUTS: Option<AuxiliaryIOConfig> = None;
 
     const MIDI_INPUT: MidiConfig = MidiConfig::None;
     const MIDI_OUTPUT: MidiConfig = MidiConfig::None;
 
     const SAMPLE_ACCURATE_AUTOMATION: bool = true;
+
+    const AUDIO_IO_LAYOUTS: &'static [AudioIOLayout] = &[AudioIOLayout {
+        main_input_channels: NonZeroU32::new(2),
+        main_output_channels: NonZeroU32::new(2),
+
+        aux_input_ports: &[new_nonzero_u32(2)],
+
+        ..AudioIOLayout::const_default()
+    }];
+
+    type SysExMessage = ();
 
     // More advanced plugins can use this to run expensive background tasks. See the field's
     // documentation for more information. `()` means that the plugin does not have any background
@@ -104,7 +115,7 @@ impl Plugin for Gain {
         self.params.clone()
     }
 
-    fn editor(&self, _async_executor: AsyncExecutor<Self>) -> Option<Box<dyn Editor>> {
+    fn editor(&mut self, _async_executor: AsyncExecutor<Self>) -> Option<Box<dyn Editor>> {
         editor::create(
             self.params.clone(),
             self.peak_meter.clone(),
@@ -112,14 +123,14 @@ impl Plugin for Gain {
         )
     }
 
-    fn accepts_bus_config(&self, config: &BusConfig) -> bool {
-        // This works with any symmetrical IO layout
-        config.num_input_channels == config.num_output_channels && config.num_input_channels > 0
-    }
+    // fn accepts_bus_config(&self, config: &BusConfig) -> bool {
+    //     // This works with any symmetrical IO layout
+    //     config.num_input_channels == config.num_output_channels && config.num_input_channels > 0
+    // }
 
     fn initialize(
         &mut self,
-        _bus_config: &BusConfig,
+        _audio_io_layout: &AudioIOLayout,
         buffer_config: &BufferConfig,
         _context: &mut impl InitContext<Self>,
     ) -> bool {
@@ -171,7 +182,8 @@ impl Plugin for Gain {
 
 impl ClapPlugin for Gain {
     const CLAP_ID: &'static str = "com.stoejmaskiner.dp000-gain";
-    const CLAP_DESCRIPTION: Option<&'static str> = Some("A simple gain plugin (for testing purposes)");
+    const CLAP_DESCRIPTION: Option<&'static str> =
+        Some("A simple gain plugin (for testing purposes)");
     const CLAP_MANUAL_URL: Option<&'static str> = Some(Self::URL);
     const CLAP_SUPPORT_URL: Option<&'static str> = None;
 
@@ -180,11 +192,14 @@ impl ClapPlugin for Gain {
 }
 
 impl Vst3Plugin for Gain {
-    const VST3_CLASS_ID: [u8; 16] = *b"st-dp000-gain---";
+    const VST3_CLASS_ID: [u8; 16] = *b"st-tp000-gain---";
+
+    const VST3_SUBCATEGORIES: &'static [Vst3SubCategory] =
+        &[Vst3SubCategory::Fx, Vst3SubCategory::Dynamics];
 
     // And don't forget to change these categories, see the docstring on `VST3_CATEGORIES` for more
     // information
-    const VST3_CATEGORIES: &'static str = "Fx|Dynamics";
+    //const VST3_CATEGORIES: &'static str = "Fx|Dynamics";
 }
 
 nih_export_clap!(Gain);

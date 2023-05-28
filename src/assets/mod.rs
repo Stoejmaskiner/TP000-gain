@@ -12,17 +12,17 @@ pub const IBM_PLEX_MONO: &str = "IBM Plex Mono";
 pub const ATKINSON_HYPERLEGIBLE_REGULAR: &str = "Atkinson Hyperlegible Regular";
 
 pub fn register_archivo_black(cx: &mut Context) {
-    cx.add_font_mem(ARCHIVO_BLACK, fonts::ARCHIVO_BLACK);
+    cx.add_fonts_mem(&[fonts::ARCHIVO_BLACK]);
 }
 pub fn register_archivo_thin(cx: &mut Context) {
-    cx.add_font_mem(ARCHIVO_THIN, fonts::ARCHIVO_THIN);
+    cx.add_fonts_mem(&[fonts::ARCHIVO_THIN]);
 }
 pub fn register_archivo_narrow(cx: &mut Context) {
-    cx.add_font_mem(ARCHIVO_NARROW, fonts::ARCHIVO_NARROW);
+    cx.add_fonts_mem(&[fonts::ARCHIVO_NARROW]);
 }
 pub fn register_ibm_plex_mono(cx: &mut Context) {
-    cx.add_font_mem(IBM_PLEX_MONO, fonts::IBM_PLEX_MONO);
+    cx.add_fonts_mem(&[fonts::IBM_PLEX_MONO]);
 }
 pub fn register_atkinson_hyperlegible_regular(cx: &mut Context) {
-    cx.add_font_mem(ATKINSON_HYPERLEGIBLE_REGULAR, fonts::ATKINSON_HYPERLEGIBLE_REGULAR);
+    cx.add_fonts_mem(&[fonts::ATKINSON_HYPERLEGIBLE_REGULAR]);
 }
